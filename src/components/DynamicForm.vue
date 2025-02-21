@@ -1,22 +1,37 @@
 <!-- src/components/DynamicForm.vue -->
 <template>
-  <form @submit.prevent="onSubmit" class="dynamic-form">
+  <form @submit.prevent="onSubmit" class="max-w-[500px] mx-auto p-4 bg-[#f7f9fc] rounded-lg shadow">
     <transition-group name="fade" tag="div">
-      <div v-for="(field, index) in fields" :key="index" class="form-group">
-        <label :for="field.model">{{ field.label }}</label>
+      <div
+        v-for="(field, index) in fields"
+        :key="index"
+        class="mb-4 flex flex-col"
+      >
+        <label :for="field.model" class="mb-2 font-bold">
+          {{ field.label }}
+        </label>
         <input
           :id="field.model"
           :type="field.type"
           v-model="formData[field.model]"
-          class="form-control"
           :placeholder="field.placeholder || ''"
           required
+          class="p-2 border border-gray-300 rounded transition-colors focus:border-blue-600 focus:outline-none"
         />
       </div>
     </transition-group>
-    <div class="actions">
-      <button type="submit" class="btn-submit">{{ editingMode ? 'Update' : 'Submit' }}</button>
-      <button v-if="editingMode" type="button" class="btn-cancel" @click="cancelEdit">Cancel</button>
+    <div class="flex gap-4">
+      <button type="submit" class="flex-1 py-3 rounded cursor-pointer transition-colors bg-blue-600 text-white hover:bg-blue-700">
+        {{ editingMode ? 'Update' : 'Submit' }}
+      </button>
+      <button
+        v-if="editingMode"
+        type="button"
+        class="flex-1 py-3 rounded cursor-pointer transition-colors bg-gray-300 text-gray-700 hover:bg-gray-500"
+        @click="cancelEdit"
+      >
+        Cancel
+      </button>
     </div>
   </form>
 </template>
@@ -76,9 +91,7 @@ function onSubmit() {
 }
 
 function cancelEdit() {
-  // Émettre un événement pour annuler l'édition
   emit('cancelEdit');
-  // Réinitialiser le formulaire
   props.fields.forEach(field => {
     formData[field.model] = '';
   });
@@ -86,64 +99,12 @@ function cancelEdit() {
 </script>
 
 <style scoped>
-.dynamic-form {
-  max-width: 500px;
-  margin: auto;
-  padding: 1rem;
-  background: #f7f9fc;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.fade-enter-active,
+.fade-leave-active {
+  @apply transition-all duration-300;
 }
-.form-group {
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-}
-.form-group label {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-.form-control {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  transition: border 0.3s;
-}
-.form-control:focus {
-  border-color: #007bff;
-  outline: none;
-}
-.actions {
-  display: flex;
-  gap: 1rem;
-}
-.btn-submit, .btn-cancel {
-  flex: 1;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.btn-submit {
-  background: #007bff;
-  color: white;
-}
-.btn-submit:hover {
-  background: #0056b3;
-}
-.btn-cancel {
-  background: #ccc;
-  color: #333;
-}
-.btn-cancel:hover {
-  background: #999;
-}
-.fade-enter-active, .fade-leave-active {
-  transition: all 0.3s;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
+.fade-enter-from,
+.fade-leave-to {
+  @apply opacity-0 translate-y-[10px];
 }
 </style>
